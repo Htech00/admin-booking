@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../components/navBar";
 import SideBar from "../components/SideBar";
 import Dashboard from "./Dashboard";
 import AddProperties from "./AddProperties";
 import ViewProperties from "./ViewProperties";
 import ViewUsers from "./ViewUsers";
 import AddAdmin from "./AddAdmin";
+import Nav from "../components/Nav";
 
 const HomePage = () => {
   const [activeNav, setActiveNav] = useState("Dashboard");
@@ -53,7 +53,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
-      <NavBar sideBarOpen={sideBarOpen} setSideBarOpen={setSideBarOpen} />
+      <Nav sideBarOpen={sideBarOpen} setSideBarOpen={setSideBarOpen} />
 
       {/* Main layout */}
       <div className="flex flex-1 flex-col md:flex-row">

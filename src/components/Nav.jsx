@@ -5,9 +5,7 @@ import { CiSettings } from "react-icons/ci";
 import { LuLogOut } from "react-icons/lu";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
-import SideBar from "./SideBar";
-
-const navBar = ({sideBarOpen, setSideBarOpen}) => {
+const Nav = ({sideBarOpen, setSideBarOpen}) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -70,4 +68,4 @@ const navBar = ({sideBarOpen, setSideBarOpen}) => {
   );
 };
 
-export default navBar;
+export default Nav;
