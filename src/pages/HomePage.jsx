@@ -7,7 +7,7 @@ import ViewProperties from "./ViewProperties";
 import ViewUsers from "./ViewUsers";
 import AddAdmin from "./AddAdmin";
 
-const MainPage = () => {
+const HomePage = () => {
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,4 +81,4 @@ const MainPage = () => {
   );
 };
 
-export default MainPage;
+export default HomePage;

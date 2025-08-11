@@ -3,9 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import MainPage from './pages/mainPage'
 import { Toaster } from 'react-hot-toast'
 import Login from './pages/Login'
+import HomePage from './pages/HomePage'
 
 function App() {
   
@@ -14,7 +14,7 @@ function App() {
     <Router >
       <Toaster position='top-center' />
       <Routes>
-        <Route path='/' element={<MainPage/>}  />
+        <Route path='/' element={<HomePage />}  />
         <Route path='login' element={<Login />} />
       </Routes>
     </Router>
