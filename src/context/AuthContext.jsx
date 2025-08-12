@@ -1,14 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext;
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [username, setUsername] = useState(null);
-  const [token, setToken] = useState(null);
+  const [username, setUsername] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
 
   const login = async (username, password) => {
     try {
-      const res = await fetch("https://admin-backend-rrt2.onrender.com/api/login", {
+      const res = await fetch("https://admin-backend-rrt2.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -17,8 +23,16 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) return false;
 
       const data = await res.json();
-      setUsername({ username: data.username, role: data.role });
+
+      const userData = { username: data.username, role: data.role };
+
+      setUsername(userData);
       setToken(data.token);
+
+      // ⬇ Save in localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", data.token);
+
       return true;
     } catch (err) {
       console.error(err);
@@ -29,6 +43,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUsername(null);
     setToken(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (
@@ -39,5 +55,5 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-    return useContext(AuthContext)
-}
+  return useContext(AuthContext);
+};

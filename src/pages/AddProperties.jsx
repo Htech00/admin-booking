@@ -6,8 +6,11 @@ const AddProperties = () => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [formValues, setFormValues] = useState({
     title: "",
+    propertyType: "",
     city: "",
     area: "",
+    longitude: "",
+    latitude: "",
     score: "",
     reviewCount: "",
     rooms: "",
@@ -15,7 +18,6 @@ const AddProperties = () => {
     size: "",
     pricePerNight: "",
   });
-
   const [images, setImages] = useState([]);
 
   const handleChange = (e) => {
@@ -23,20 +25,14 @@ const AddProperties = () => {
   };
 
   const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
+    const files = Array.from(e.target.files);
     const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-    const isValid = selectedFiles.every((file) =>
-      validTypes.includes(file.type)
-    );
-
-    if (!isValid) {
-      toast.error("Only image files (jpg, jpeg, png, webp) are allowed");
-      e.target.value = ""; // Clear the file input
+    if (!files.every((f) => validTypes.includes(f.type))) {
+      toast.error("Only image files (jpg/jpeg/png/webp) are allowed");
+      e.target.value = "";
       return;
     }
-
-    setImages(selectedFiles);
+    setImages(files);
   };
 
   const handleSubmit = async (e) => {
@@ -44,12 +40,10 @@ const AddProperties = () => {
     setIsSubmit(true);
 
     const data = new FormData();
-    for (let key in formValues) {
-      data.append(key, formValues[key]);
-    }
-    for (let i = 0; i < images.length; i++) {
-      data.append("images", images[i]);
-    }
+    Object.entries(formValues).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+    images.forEach((img) => data.append("images", img));
 
     try {
       const res = await fetch(
@@ -61,26 +55,30 @@ const AddProperties = () => {
       );
 
       if (!res.ok) {
-        const errData = await res.json();
-        alert("Upload failed: " + (errData.error || "Unknown error"));
-        return;
+        const err = await res.json();
+        alert("Upload failed: " + (err.error || "Unknown error"));
+      } else {
+        toast.success("Property uploaded successfully!", { duration: 5000 });
+        setFormValues({
+          title: "",
+          propertyType: "",
+          city: "",
+          area: "",
+          longitude: "",
+          latitude: "",
+          score: "",
+          reviewCount: "",
+          rooms: "",
+          bathrooms: "",
+          size: "",
+          pricePerNight: "",
+          amenities: "",
+        });
+        setImages([]);
+        document.querySelector(".images").value = "";
       }
-      toast.success("Property Uploaded Successfully!", { duration: 5000 });
-      setFormValues({
-        title: "",
-        city: "",
-        area: "",
-        score: "",
-        reviewCount: "",
-        rooms: "",
-        bathrooms: "",
-        size: "",
-        pricePerNight: "",
-      });
-      setImages([]);
-      document.querySelector(".images").value = "";
-    } catch (error) {
-      toast.error("Something went wrong: " + error.message, { duration: 5000 });
+    } catch (err) {
+      toast.error("Something went wrong: " + err.message, { duration: 5000 });
     } finally {
       setIsSubmit(false);
     }
@@ -90,18 +88,20 @@ const AddProperties = () => {
     <div className="max-w-full md:max-w-[1000px] mx-auto px-4 md:px-6 bg-[#edeeecf2]">
       <div className="flex flex-col md:flex-row gap-3 items-center pb-5">
         <PiBuildingApartmentLight className="text-[40px] md:text-[50px] text-[#0c36c2]" />
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Add New Property</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1f2937]">
+          Add New Property
+        </h2>
       </div>
 
       <form
-        className="bg-white shadow-md rounded-lg p-4 md:p-6 space-y-6"
         onSubmit={handleSubmit}
+        className="bg-[#ffffff] shadow-md rounded-lg p-4 md:p-6 space-y-6"
         encType="multipart/form-data"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Title
             </label>
             <input
@@ -110,14 +110,36 @@ const AddProperties = () => {
               value={formValues.title}
               onChange={handleChange}
               placeholder="e.g. Villa Family Resort"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
+          {/* Property Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-800 mb-1">
+              Property Type
+            </label>
+            <select
+              name="propertyType"
+              value={formValues.propertyType}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 bg-white rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+            >
+              <option value="" disabled>
+                -- Select Property Type --
+              </option>
+              <option value="House">House</option>
+              <option value="Villa">Villa</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Apartment">Apartment</option>
+            </select>
+          </div>
+
           {/* City */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               City
             </label>
             <input
@@ -126,14 +148,14 @@ const AddProperties = () => {
               value={formValues.city}
               onChange={handleChange}
               placeholder="e.g. Bandung"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
           {/* Area */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Area
             </label>
             <input
@@ -142,14 +164,46 @@ const AddProperties = () => {
               value={formValues.area}
               onChange={handleChange}
               placeholder="e.g. Dago Pakar"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+              required
+            />
+          </div>
+
+          {/* Longitude */}
+          <div>
+            <label className="block text-sm font-medium text-gray-800 mb-1">
+              Longitude
+            </label>
+            <input
+              type="text"
+              name="longitude"
+              value={formValues.longitude}
+              onChange={handleChange}
+              placeholder="e.g. 43.4455"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+              required
+            />
+          </div>
+
+          {/* Latitude */}
+          <div>
+            <label className="block text-sm font-medium text-gray-800 mb-1">
+              Latitude
+            </label>
+            <input
+              type="text"
+              name="latitude"
+              value={formValues.latitude}
+              onChange={handleChange}
+              placeholder="e.g. 3.4557"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
           {/* Rating */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Rating
             </label>
             <input
@@ -159,13 +213,13 @@ const AddProperties = () => {
               value={formValues.score}
               onChange={handleChange}
               placeholder="e.g. 4.8"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
             />
           </div>
 
           {/* Review Count */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Review Count
             </label>
             <input
@@ -174,13 +228,13 @@ const AddProperties = () => {
               value={formValues.reviewCount}
               onChange={handleChange}
               placeholder="e.g. 21"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
             />
           </div>
 
           {/* Rooms */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Rooms
             </label>
             <input
@@ -189,14 +243,14 @@ const AddProperties = () => {
               value={formValues.rooms}
               onChange={handleChange}
               placeholder="e.g. 4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
           {/* Bathrooms */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Bathrooms
             </label>
             <input
@@ -205,14 +259,14 @@ const AddProperties = () => {
               value={formValues.bathrooms}
               onChange={handleChange}
               placeholder="e.g. 2"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
           {/* Size */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Size (m²)
             </label>
             <input
@@ -221,14 +275,14 @@ const AddProperties = () => {
               value={formValues.size}
               onChange={handleChange}
               placeholder="e.g. 42.0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
-          {/* Price */}
+          {/* Price per Night */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Price per Night (#)
             </label>
             <input
@@ -237,14 +291,29 @@ const AddProperties = () => {
               value={formValues.pricePerNight}
               onChange={handleChange}
               placeholder="e.g. 152"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
+          {/* Amenities */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
+              Amenities
+            </label>
+            <textarea
+              name="amenities"
+              value={formValues.amenities}
+              onChange={handleChange}
+              placeholder="e.g. Free WiFi, Swimming Pool, Parking, Air Conditioning..."
+              rows="4"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+            ></textarea>
+          </div>
+
           {/* Images */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Upload Images
             </label>
             <input
@@ -252,7 +321,7 @@ const AddProperties = () => {
               name="images"
               onChange={handleImageChange}
               multiple
-              className="images w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-[#0c36c2] file:rounded-md file:text-white file:cursor-pointer hover:file:bg-[#0c36c2]/90"
+              className="images w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-[#0c36c2] file:text-white file:rounded-md file:cursor-pointer hover:file:bg-[#0c36c2]/90"
               required
             />
           </div>
@@ -261,8 +330,8 @@ const AddProperties = () => {
         <div className="text-center pt-4">
           <button
             type="submit"
-            className="bg-[#0c36c2] text-white px-6 py-2 rounded-md hover:bg-[#0c36c2]/90 transition-all cursor-pointer"
             disabled={isSubmit}
+            className="bg-[#0c36c2] text-white px-6 py-2 rounded-md hover:bg-[#0c36c2]/90 transition-all cursor-pointer disabled:opacity-50"
           >
             {isSubmit ? "Submitting..." : "Add Property"}
           </button>

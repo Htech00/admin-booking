@@ -4,8 +4,10 @@ import { CiHome } from "react-icons/ci";
 import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUsers } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
+import { useAuth } from "../context/AuthContext";
 
 const SideBar = ({ activeNav, setActiveNav, show }) => {
+  const {username} = useAuth();
   const navigation = [
     {
       name: "Dashboard",
@@ -28,10 +30,17 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
     },
 
     {
+      
       name: "Add Admin",
       icon: <RiAdminLine className="text-[18px]" />,
+      role:"super_admin"
     },
   ];
+
+  // Only show items without a role OR items where the user has the required role
+  const filteredNavigation = navigation.filter(
+    (item) => !item.role || username?.role === item.role
+  );
 
   return (
     <div
@@ -43,7 +52,7 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
         <p className="text-[#9b9494] font-medium">Navigation</p>
 
         <div className="flex flex-col gap-7 py-7">
-          {navigation.map(({ name, icon }) => (
+          {filteredNavigation.map(({ name, icon }) => (
             <a 
             className={`flex py-3 pl-1 hover:text-white gap-5 text-white/70 cursor-pointer key={name} ${activeNav === name ? 'border-l-[#fa6328] border-l-4 rounded-md bg-[#3d4457]/20 text-white/80': ''}`}
             key={name}

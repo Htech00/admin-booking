@@ -6,19 +6,29 @@ import ViewProperties from "./ViewProperties";
 import ViewUsers from "./ViewUsers";
 import AddAdmin from "./AddAdmin";
 import Nav from "../components/Nav";
+import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const HomePage = () => {
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const {username, token, logout} = useAuth();
+  const [secretData, setSecretData] = useState("")
+
+   const user = localStorage.getItem('user')
+   if (!user) {
+    return <Navigate to={"/login"} replace />
+   }
 
   useEffect(() => {
+   
     setIsLoading(true);
     const timeOut = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
     return () => clearTimeout(timeOut);
-  }, [activeNav]);
+  }, [activeNav, username, token]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -46,14 +56,14 @@ const HomePage = () => {
       case "Add Admin":
         return <AddAdmin />;
       default:
-        return <Dashboard />;
+        return <Dashboard/>;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
-      <Nav sideBarOpen={sideBarOpen} setSideBarOpen={setSideBarOpen} />
+      <Nav sideBarOpen={sideBarOpen} setSideBarOpen={setSideBarOpen} username ={username}  />
 
       {/* Main layout */}
       <div className="flex flex-1 flex-col md:flex-row">
