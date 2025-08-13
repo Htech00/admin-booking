@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 const Nav = ({ sideBarOpen, setSideBarOpen }) => {
   const { username, token, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -19,28 +19,46 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
     localStorage.removeItem("user"); // Clear saved user
     localStorage.removeItem("token"); // Clear saved token
     setDropdownOpen(false);
-    navigate("/login")
+    navigate("/login");
   };
 
   return (
     <div className="fixed w-full z-50">
       <div className="flex justify-between items-center bg-[#f0eeee] shadow-2xl">
-        
-        {/* Left Sidebar Toggle */}
-        <div className="flex items-center bg-[#3d4457] h-15 w-[250px] justify-center gap-5 z-10 border-b-1 border-[#1e2f4de7]">
-          <p className="text-[18px] font-medium text-white/70 ">
-            Admin Dashboard
-          </p>
-          <button
-            className="flex h-3 w-5 rounded-xl border-white/70 border items-center cursor-pointer"
-            onClick={() => setSideBarOpen(!sideBarOpen)}
-          >
-            <div
-              className={`h-2 w-2 rounded-full border-white/70 border-2 ${
-                sideBarOpen ? "translate-x-2" : ""
-              }`}
-            ></div>
-          </button>
+        {/* Left Sidebar Toggle Desktop */}
+        <div className="hidden  sm:block">
+          <div className="flex items-center bg-[#3d4457] h-15 w-[250px] justify-center gap-5 z-10 border-b-1 border-[#1e2f4de7]">
+            <p className="text-[18px] font-medium text-white/70">
+              Admin Dashboard
+            </p>
+            <button
+              className="flex h-3 w-5 rounded-xl border-white/70 border items-center cursor-pointer"
+              onClick={() => setSideBarOpen(!sideBarOpen)}
+            >
+              <div
+                className={`h-2 w-2 rounded-full border-white/70 border-2 ${
+                  sideBarOpen ? "translate-x-2" : ""
+                }`}
+              ></div>
+            </button>
+          </div>
+        </div>
+
+        {/* Left Sidebar Toggle Desktop */}
+        <div className="block  sm:hidden">
+          <div className="flex items-center bg-[#3d4457] h-15 w-[100px] justify-center gap-5 z-10 border-b-1 border-[#1e2f4de7]">
+            
+            <button
+              className="flex h-3 w-5 rounded-xl border-white/70 border items-center cursor-pointer"
+              onClick={() => setSideBarOpen(!sideBarOpen)}
+            >
+              <div
+                className={`h-2 w-2 rounded-full border-white/70 border-2 ${
+                  sideBarOpen ? "translate-x-2" : ""
+                }`}
+              ></div>
+            </button>
+          </div>
         </div>
 
         {/* Right Side Icons */}
@@ -54,9 +72,9 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
           </div>
 
           {/* User Profile */}
-          <div 
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={toggleDropdown}
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={toggleDropdown}
           >
             <FaRegUserCircle />
             <p>Welcome {username?.username || ""}</p>

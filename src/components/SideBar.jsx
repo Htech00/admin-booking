@@ -11,28 +11,28 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
   const navigation = [
     {
       name: "Dashboard",
-      icon: <CiHome className="text-[18px]" />,
+      icon: <CiHome className="sm:text-[18px] text-[40px]" />,
     },
 
     {
       name: "Add Property",
-      icon: <HiOutlineSquaresPlus className="text-[18px]" />,
+      icon: <HiOutlineSquaresPlus className="sm:text-[18px] text-[40px]" />,
     },
 
     {
       name: "View All Properties",
-      icon: <TfiViewListAlt className="text-[18px]" />,
+      icon: <TfiViewListAlt className="sm:text-[18px] text-[40px]" />,
     },
 
     {
       name: "View All Users",
-      icon: <FaUsers className="text-[18px]" />,
+      icon: <FaUsers className="sm:text-[18px] text-[40px]" />,
     },
 
     {
       
       name: "Add Admin",
-      icon: <RiAdminLine className="text-[18px]" />,
+      icon: <RiAdminLine className="sm:text-[18px] text-[40px]" />,
       role:"super_admin"
     },
   ];
@@ -44,7 +44,7 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
 
   return (
     <div
-      className={`fixed  h-full w-[250px] bg-[#3d4457] text-white mt-15 z-1 transition-transform duration-300 ease-in-out ${
+      className={`fixed  h-full sm:w-[250px] w-[100px] bg-[#3d4457] text-white mt-15 z-1 transition-transform duration-300 ease-in-out ${
         show ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -59,7 +59,10 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
             onClick={() => {setActiveNav(name)}}
             >
               {icon}
-              {name}
+              <span className="hidden sm:block">
+                {name}
+              </span>
+              
             </a>
           ))}
         </div>

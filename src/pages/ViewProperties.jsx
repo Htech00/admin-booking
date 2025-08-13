@@ -12,6 +12,10 @@ const customStyles = {
       color: "white",
       fontSize: "16px",
       fontWeight: "bolder",
+      whiteSpace: "normal", 
+      wordWrap: "break-word",
+      maxWidth: "150px", 
+      textAlign: "center",
     },
   },
 };
@@ -80,31 +84,60 @@ const ViewProperties = () => {
     { name: "Title", 
       selector: (row) => row.title, 
       sortable: true,
+      width: "150px",
       wrap:true,
     },
     { name: "City", 
       selector: (row) => row.city,
+      width: "150px",
       wrap:true
     },
     { name: "Area", 
       selector: (row) => row.area,
+      width: "150px",
       wrap:true
     },
     { name: "Rating", 
-      selector: (row) => row.score
+      selector: (row) => row.score,
+      width: "150px",
+      wrap:true
     },
     { name: "Reviews", 
+      width: "150px",
+      wrap:true,
       selector: (row) => row.reviewCount
     },
     { name: "Rooms",
+      width: "150px",
+      wrap:true,
       selector: (row) => row.rooms
     },
     { name: "Bathrooms",
+      width: "150px",
+      wrap:true,
       selector: (row) => row.bathrooms
     },
     { name: "Size (sq ft)",
-      selector: (row) => row.size },
-    { name: "Price/Night", selector: (row) => `₦${row.pricePerNight}` },
+      width: "150px",
+      wrap:true,
+      selector: (row) => row.size
+    },
+    { name: "Amenities",
+      width: "150px",
+      wrap:true,
+      selector: (row) => row.amenities.join(", ")
+    },
+    { name: "Description",
+      width: "150px",
+      wrap:true,
+      selector: (row) => row.description
+    },
+    { name: "Price/Night",
+      selector: (row) => `₦${row.pricePerNight}`,
+      width: "150px",
+      wrap:true,
+     },
+     
     {
       name: "Image",
       selector: (row) => (
@@ -114,6 +147,8 @@ const ViewProperties = () => {
           className="h-20 w-20 object-cover"
         />
       ),
+      width: "150px",
+      wrap:true,
     },
     {
       name: "Actions",
@@ -128,6 +163,8 @@ const ViewProperties = () => {
           </button>
         </div>
       ),
+      width: "150px",
+      wrap:true,
     },
   ];
 
