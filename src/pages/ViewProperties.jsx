@@ -77,14 +77,33 @@ const ViewProperties = () => {
   };
 
   const columns = (onEdit) => [
-    { name: "Title", selector: (row) => row.title, sortable: true },
-    { name: "City", selector: (row) => row.city },
-    { name: "Area", selector: (row) => row.area },
-    { name: "Rating", selector: (row) => row.score },
-    { name: "Reviews", selector: (row) => row.reviewCount },
-    { name: "Rooms", selector: (row) => row.rooms },
-    { name: "Bathrooms", selector: (row) => row.bathrooms },
-    { name: "Size (sq ft)", selector: (row) => row.size },
+    { name: "Title", 
+      selector: (row) => row.title, 
+      sortable: true,
+      wrap:true,
+    },
+    { name: "City", 
+      selector: (row) => row.city,
+      wrap:true
+    },
+    { name: "Area", 
+      selector: (row) => row.area,
+      wrap:true
+    },
+    { name: "Rating", 
+      selector: (row) => row.score
+    },
+    { name: "Reviews", 
+      selector: (row) => row.reviewCount
+    },
+    { name: "Rooms",
+      selector: (row) => row.rooms
+    },
+    { name: "Bathrooms",
+      selector: (row) => row.bathrooms
+    },
+    { name: "Size (sq ft)",
+      selector: (row) => row.size },
     { name: "Price/Night", selector: (row) => `₦${row.pricePerNight}` },
     {
       name: "Image",

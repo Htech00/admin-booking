@@ -17,6 +17,7 @@ const AddProperties = () => {
     bathrooms: "",
     size: "",
     pricePerNight: "",
+    description:""
   });
   const [images, setImages] = useState([]);
 
@@ -296,19 +297,38 @@ const AddProperties = () => {
             />
           </div>
 
-          {/* Amenities */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-800 mb-1">
-              Amenities
-            </label>
-            <textarea
-              name="amenities"
-              value={formValues.amenities}
-              onChange={handleChange}
-              placeholder="e.g. Free WiFi, Swimming Pool, Parking, Air Conditioning..."
-              rows="4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
-            ></textarea>
+          {/* Amenities and Description (side by side on md+) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+            {/* Amenities */}
+            <div>
+              <label className="block text-sm font-medium text-gray-800 mb-1">
+                Amenities
+              </label>
+              <textarea
+                name="amenities"
+                value={formValues.amenities}
+                onChange={handleChange}
+                placeholder="e.g. Free WiFi, Swimming Pool, Parking, Air Conditioning..."
+                rows="4"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+              ></textarea>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-800 mb-1">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formValues.description}
+                onChange={handleChange}
+                placeholder="Write a short description about the property..."
+                rows="4"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+                required
+              ></textarea>
+            </div>
           </div>
 
           {/* Images */}

@@ -14,7 +14,6 @@ const HomePage = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const {username, token, logout} = useAuth();
-  const [secretData, setSecretData] = useState("")
 
    const user = localStorage.getItem('user')
    if (!user) {
