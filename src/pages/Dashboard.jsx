@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineSignalCellularAlt } from "react-icons/md";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa6";
 import { PiBuildingApartmentLight } from "react-icons/pi";
+import axios from "axios";
 
 const Dashboard = () => {
+  const [totalCount, setTotalCount] = useState(0)
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const result = await axios.get('https://admin-backend-rrt2.onrender.com/api/property/totalProperty');
+        setTotalCount(result.data.totalCount);
+      } catch (err) {
+        console.error("Error fetching count:", err);
+
+      }
+    }
+    fetchCount();
+  }, []);
   return (
     <div className="flex flex-col lg:flex-row gap-10 items-center lg:justify-between">
       <div className="shadow-2xl">
         <div className="flex flex-col bg-white gap-4 p-5 w-[300px]">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <p className="text-[25px] text-[#fa6328] font-medium">30200</p>
+              <p className="text-[25px] text-[#fa6328] font-medium">{totalCount}</p>
               <p className="text-gray-400">Total Properties</p>
             </div>
             <MdOutlineSignalCellularAlt className="text-[50px] text-gray-500" />
