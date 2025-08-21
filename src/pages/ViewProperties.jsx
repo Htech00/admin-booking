@@ -3,7 +3,11 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import { FaRegEdit } from "react-icons/fa";
-import { MdDeleteOutline } from "react-icons/md";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { BiEdit } from "react-icons/bi";
+import UpdateProperties from "../components/UpdateProperties";
+
+
 
 const customStyles = {
   headCells: {
@@ -27,8 +31,9 @@ const ViewProperties = () => {
   const [perPage] = useState(10); // Fixed at 10 per page
   const [currentPage, setCurrentPage] = useState(1);
   const [pending, setPending] = useState(false);
-
+  const [modalName, setModalName] = useState("Properties")
   const [modalOpen, setModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const openModal = (id) => {
@@ -36,9 +41,21 @@ const ViewProperties = () => {
     setModalOpen(true);
   };
 
+
+
   const closeModal = () => {
     setSelectedId(null);
     setModalOpen(false);
+  };
+
+    const UpdateModal = (id) => {
+    setSelectedId(id);
+    setUpdateModalOpen(true);
+  };
+
+   const closeUpdateModal = () => {
+    setSelectedId(null);
+    setUpdateModalOpen(false);
   };
 
   const fetchProperties = async (page) => {
@@ -133,7 +150,10 @@ const ViewProperties = () => {
       selector: (row) => row.description
     },
     { name: "Price/Night",
-      selector: (row) => `₦${row.pricePerNight}`,
+      selector: (row) => `${row.pricePerNight.toLocaleString("en-NG", {
+                            style: "currency",
+                            currency: "NGN",
+                          })}`,
       width: "150px",
       wrap:true,
      },
@@ -155,11 +175,18 @@ const ViewProperties = () => {
       cell: (row) => (
         <div className="flex gap-1">
           <button
-            className="text-[#f2594e] flex w-[50px] cursor-pointer"
+            className="text-blue-700 flex w-[60px] cursor-pointer"
+            onClick={() => UpdateModal(row._id)}
+          >
+            <BiEdit  />
+            Edit
+          </button>
+          <button
+            className="text-[#f2594e] flex w-[60px] cursor-pointer"
             onClick={() => openModal(row._id)}
           >
-            <MdDeleteOutline />
-            Delete
+            <RiDeleteBin5Line  />
+            Remove
           </button>
         </div>
       ),
@@ -190,7 +217,7 @@ const ViewProperties = () => {
       </div>
 
       <DataTable
-        columns={columns(handleEdit, handleConfirmDelete)}
+        columns={columns(handleConfirmDelete)}
         data={filteredProperties}
         pagination
         paginationServer
@@ -208,6 +235,13 @@ const ViewProperties = () => {
         isOpen={modalOpen}
         onClose={closeModal}
         onConfirm={handleConfirmDelete}
+        modalName={modalName}
+      />
+
+      <UpdateProperties
+        isOpen={updateModalOpen}
+        onClose={closeUpdateModal}
+        propertyId={selectedId}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import AddAdmin from "./AddAdmin";
 import Nav from "../components/Nav";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
+import ListAdmin from "./ListAdmin";
 
 const HomePage = () => {
   const [activeNav, setActiveNav] = useState("Dashboard");
@@ -54,6 +55,8 @@ const HomePage = () => {
         return <ViewUsers />;
       case "Add Admin":
         return <AddAdmin />;
+      case "View All Admin":
+        return <ListAdmin />;
       default:
         return <Dashboard/>;
     }

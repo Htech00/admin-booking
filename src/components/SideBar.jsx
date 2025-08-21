@@ -4,6 +4,7 @@ import { CiHome } from "react-icons/ci";
 import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUsers } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
+import { SiAdminer } from "react-icons/si";
 import { useAuth } from "../context/AuthContext";
 
 const SideBar = ({ activeNav, setActiveNav, show }) => {
@@ -33,6 +34,11 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
       
       name: "Add Admin",
       icon: <RiAdminLine className="sm:text-[18px] text-[40px]" />,
+      role:"super_admin"
+    },
+    {
+      name: "View All Admin",
+      icon: <SiAdminer className="sm:text-[18px] text-[40px]" />,
       role:"super_admin"
     },
   ];

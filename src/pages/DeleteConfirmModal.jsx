@@ -1,7 +1,7 @@
 import React from "react";
 
 
-const DeleteConfirmModal = ({ isOpen, onClose, onConfirm }) => {
+const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, modalName }) => {
   if (!isOpen) return null;
 
   return (
@@ -15,14 +15,14 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm }) => {
             Confirm Deletion 
         </h2>
         <p className="mb-6 text-gray-600">
-          Are you sure you want to delete this Property?
+          Are you sure you want to {modalName==='Properties'? 'remove':'delete'} this {modalName? modalName:null}?
         </p>
         <div className="flex justify-center gap-4">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded cursor-pointer"
           >
-            No
+            Cancel
           </button>
           <button
             onClick={onConfirm}

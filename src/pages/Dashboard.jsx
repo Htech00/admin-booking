@@ -7,18 +7,32 @@ import axios from "axios";
 
 const Dashboard = () => {
   const [totalCount, setTotalCount] = useState(0)
+  const [totalUserCount, setTotalUserCount] = useState(0)
 
-  useEffect(() => {
-    const fetchCount = async () => {
+   const fetchCount = async () => {
       try {
-        const result = await axios.get('https://admin-backend-rrt2.onrender.com/api/property/totalProperty');
+        const result = await axios.get('https://admin-backend-rrt2.onrender.com/api/property/totalProperty'); 
         setTotalCount(result.data.totalCount);
       } catch (err) {
         console.error("Error fetching count:", err);
 
       }
     }
+
+    const fetchUserCount = async () => {
+      try {
+        const result = await axios.get('https://tidoy-backend-2-l1cj.onrender.com/api/auth/count'); 
+        setTotalUserCount(result.data.totalCount);
+      } catch (err) {
+        console.error("Error fetching count:", err);
+
+      }
+    }
+
+  useEffect(() => {
+   
     fetchCount();
+    fetchUserCount();
   }, []);
   return (
     <div className="flex flex-col lg:flex-row gap-10 items-center lg:justify-between">
@@ -42,7 +56,7 @@ const Dashboard = () => {
         <div className="flex flex-col bg-white gap-4 p-5 w-[300px]">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <p className="text-[25px] text-[#17ed50] font-medium">2200</p>
+              <p className="text-[25px] text-[#17ed50] font-medium">{totalUserCount}</p>
               <p className="text-gray-500">Total Users</p>
             </div>
             <FaUsers className="text-[50px] text-gray-500" />
