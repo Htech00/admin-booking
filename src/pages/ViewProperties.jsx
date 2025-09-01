@@ -2,23 +2,20 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import DeleteConfirmModal from "./DeleteConfirmModal";
-import { FaRegEdit } from "react-icons/fa";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BiEdit } from "react-icons/bi";
+import { BiEditAlt } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
 import UpdateProperties from "../components/UpdateProperties";
-
-
 
 const customStyles = {
   headCells: {
     style: {
-      backgroundColor: "black",
-      color: "white",
-      fontSize: "16px",
-      fontWeight: "bolder",
-      whiteSpace: "normal", 
+      backgroundColor: "white",
+      color: "#3e4040",
+      fontSize: "14px",
+      fontWeight: "bold",
+      whiteSpace: "normal",
       wordWrap: "break-word",
-      maxWidth: "150px", 
+      maxWidth: "150px",
       textAlign: "center",
     },
   },
@@ -31,7 +28,7 @@ const ViewProperties = () => {
   const [perPage] = useState(10); // Fixed at 10 per page
   const [currentPage, setCurrentPage] = useState(1);
   const [pending, setPending] = useState(false);
-  const [modalName, setModalName] = useState("Properties")
+  const [modalName, setModalName] = useState("Properties");
   const [modalOpen, setModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -41,19 +38,17 @@ const ViewProperties = () => {
     setModalOpen(true);
   };
 
-
-
   const closeModal = () => {
     setSelectedId(null);
     setModalOpen(false);
   };
 
-    const UpdateModal = (id) => {
+  const UpdateModal = (id) => {
     setSelectedId(id);
     setUpdateModalOpen(true);
   };
 
-   const closeUpdateModal = () => {
+  const closeUpdateModal = () => {
     setSelectedId(null);
     setUpdateModalOpen(false);
   };
@@ -98,100 +93,99 @@ const ViewProperties = () => {
   };
 
   const columns = (onEdit) => [
-    { name: "Title", 
-      selector: (row) => row.title, 
+    {
+      name: "Title",
+      selector: (row) => row.title,
       sortable: true,
       width: "150px",
-      wrap:true,
+      wrap: true,
     },
-    { name: "City", 
-      selector: (row) => row.city,
-      width: "150px",
-      wrap:true
-    },
-    { name: "Area", 
-      selector: (row) => row.area,
-      width: "150px",
-      wrap:true
-    },
-    { name: "Rating", 
+    { name: "City", selector: (row) => row.city, width: "150px", wrap: true },
+    { name: "Area", selector: (row) => row.area, width: "150px", wrap: true },
+    {
+      name: "Rating",
       selector: (row) => row.score,
-      width: "150px",
-      wrap:true
+      width: "100px",
+      wrap: true,
     },
-    { name: "Reviews", 
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.reviewCount
+    {
+      name: "Reviews",
+      width: "100px",
+      wrap: true,
+      selector: (row) => row.reviewCount,
     },
-    { name: "Rooms",
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.rooms
+    { name: "Rooms", width: "100px", wrap: true, selector: (row) => row.rooms },
+    {
+      name: "Bath",
+      width: "70px",
+      wrap: true,
+      selector: (row) => row.bathrooms,
     },
-    { name: "Bathrooms",
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.bathrooms
+    {
+      name: "Size",
+      width: "70px",
+      wrap: true,
+      selector: (row) => row.size,
     },
-    { name: "Size (sq ft)",
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.size
+    {
+      name: "Amenities",
+      width: "100px",
+      wrap: true,
+      selector: (row) => row.amenities.join(", "),
     },
-    { name: "Amenities",
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.amenities.join(", ")
+    {
+      name: "Desc",
+      width: "100px",
+      wrap: true,
+      selector: (row) => row.description,
     },
-    { name: "Description",
-      width: "150px",
-      wrap:true,
-      selector: (row) => row.description
+    {
+      name: "Price",
+      selector: (row) =>
+        `${row.pricePerNight.toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+        })}`,
+      width: "100px",
+      wrap: true,
     },
-    { name: "Price/Night",
-      selector: (row) => `${row.pricePerNight.toLocaleString("en-NG", {
-                            style: "currency",
-                            currency: "NGN",
-                          })}`,
-      width: "150px",
-      wrap:true,
-     },
-     
+
     {
       name: "Image",
       selector: (row) => (
-        <img
+        <div className=" bg-[#ebebeb] items-center justify-center flex rounded-lg  h-[50px] w-[60px] m-1">
+          <img
           src={row.images[0]}
           alt={row.title}
-          className="h-20 w-20 object-cover"
+          className="h-[40px] w-[50px]  rounded-md object-cover"
         />
+        </div>
+        
       ),
-      width: "150px",
-      wrap:true,
+      width: "100px",
+      wrap: true,
     },
     {
       name: "Actions",
       cell: (row) => (
-        <div className="flex gap-1">
+        <div className="flex gap-3">
+            <button
+              className="text-[#f2594e] text-[20px] h-[35px] flex justify-center items-center w-[40px] rounded-lg bg-[#faf3f0] cursor-pointer hover:bg-[#f2594e] hover:text-[white]"
+              onClick={() => UpdateModal(row._id)}
+            >
+              <BiEditAlt />
+            </button>
+
           <button
-            className="text-blue-700 flex w-[60px] cursor-pointer"
-            onClick={() => UpdateModal(row._id)}
-          >
-            <BiEdit  />
-            Edit
-          </button>
-          <button
-            className="text-[#f2594e] flex w-[60px] cursor-pointer"
+            className="text-[#fc6f7b] text-[20px] h-[35px] flex justify-center items-center w-[40px] rounded-lg bg-[#faebec] cursor-pointer hover:bg-[#fc6f7b] hover:text-[white]"
             onClick={() => openModal(row._id)}
           >
-            <RiDeleteBin5Line  />
-            Remove
+            <AiOutlineDelete  />
           </button>
         </div>
       ),
-      width: "150px",
-      wrap:true,
+      width: "100px",
+      wrap: true,
     },
   ];
 
@@ -202,7 +196,7 @@ const ViewProperties = () => {
   );
 
   return (
-    <div className="p-2 max-w-full md:max-w-[1000px] lg:w-[1200px] mx-auto">
+    <div className="p-2 max-w-full md:max-w-[1000px] lg:w-[1000px] mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
         <p className="font-bold text-[24px] md:text-[28px] whitespace-nowrap">
           Property Listings
@@ -225,7 +219,6 @@ const ViewProperties = () => {
         onChangePage={handlePageChange}
         progressPending={pending}
         customStyles={customStyles}
-        highlightOnHover
         pointerOnHover
         responsive
         noHeader

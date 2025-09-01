@@ -14,15 +14,14 @@ const HomePage = () => {
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const {username, token, logout} = useAuth();
+  const { username, token } = useAuth(); // removed logout (unused)
 
-   const user = localStorage.getItem('user')
-   if (!user) {
-    return <Navigate to={"/login"} replace />
-   }
+  const user = localStorage.getItem("user");
+  if (!user) {
+    return <Navigate to={"/login"} replace />;
+  }
 
   useEffect(() => {
-   
     setIsLoading(true);
     const timeOut = setTimeout(() => {
       setIsLoading(false);
@@ -58,14 +57,18 @@ const HomePage = () => {
       case "View All Admin":
         return <ListAdmin />;
       default:
-        return <Dashboard/>;
+        return <Dashboard />;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
-      <Nav sideBarOpen={sideBarOpen} setSideBarOpen={setSideBarOpen} username ={username}  />
+      <Nav
+        sideBarOpen={sideBarOpen}
+        setSideBarOpen={setSideBarOpen}
+        username={username}
+      />
 
       {/* Main layout */}
       <div className="flex flex-1 flex-col md:flex-row">
@@ -84,7 +87,7 @@ const HomePage = () => {
             ${sideBarOpen ? "justify-center" : "justify-start px-4"} 
             flex`}
         >
-          <div className="w-full max-w-[100%] sm:max-w-[700px] md:max-w-[800px] mt-[100px] px-4">
+          <div className="w-full max-w-[100%] sm:max-w-[700px] md:max-w-[800px] pt-16 px-4">
             {renderContent()}
           </div>
         </div>

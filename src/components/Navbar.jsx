@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import NotificationBox from "./NotificationBox";
 import io from "socket.io-client";
 import axios from "axios";
-import AdminChat from "../pages/AdminChat";
 
 // Connect to backend Socket.IO
 const socket = io(import.meta.env.VITE_API_BASE || "http://localhost:5000");
@@ -21,8 +20,6 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [senderId, setSenderId] = useState(null)
-  const [chatBoxOpen, setChatBoxOpen] = useState(false)
   const bellRef = useRef(null);
 
   // Sidebar toggle
@@ -83,23 +80,22 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
 
   // Navigate to chat + mark messages as read
   const handleNotificationClick = async (notif) => {
-  setOpen(false);
-  setSenderId(notif.senderId)
-  // navigate(`/admin/chat/${notif.senderId}`); // ✅ match the route
+    setOpen(false);
+    navigate(`/chat/${notif.senderId}`);
 
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_API_BASE}/chat/read/${notif.senderId}`
-    );
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE}/chat/read/${notif.senderId}`
+      );
 
-    // Remove unread from this sender
-    setNotifications((prev) =>
+      // Remove unread from this sender
+      setNotifications((prev) =>
         prev.filter((n) => n.senderId !== notif.senderId)
-    );
-  } catch (err) {
-    console.error("❌ Failed to mark messages as read:", err);
-  }
-};
+      );
+    } catch (err) {
+      console.error("❌ Failed to mark messages as read:", err);
+    }
+  };
 
   return (
     <div className="fixed w-full z-50">
@@ -161,7 +157,6 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
                 notifications={notifications}
                 onClose={() => setOpen(false)}
                 onNotificationClick={handleNotificationClick}
-                chatBoxOpen = {setChatBoxOpen}
               />
             )}
           </div>
@@ -200,11 +195,6 @@ const Nav = ({ sideBarOpen, setSideBarOpen }) => {
           )}
         </div>
       </div>
-      {chatBoxOpen ?
-      <AdminChat userName ={senderId} chatBoxOpen = {setChatBoxOpen} />
-      : null
-       }
-      
     </div>
   );
 };

@@ -1,24 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PiBuildingApartmentLight } from "react-icons/pi";
 import toast from "react-hot-toast";
 
 const AddProperties = () => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const [city, setCity] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
   const [formValues, setFormValues] = useState({
     title: "",
     propertyType: "",
     city: "",
     area: "",
-    longitude: "",
-    latitude: "",
     score: "",
     reviewCount: "",
     rooms: "",
     bathrooms: "",
     size: "",
     pricePerNight: "",
-    description:""
+    description: "",
   });
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (city.trim() !== "") {
+        fetchCoordinates(city);
+      }
+    }, 800); // wait 800ms after typing stops
+
+    return () => clearTimeout(delayDebounce); // cleanup
+  }, [city]);
+
+  // Automatically Fetch the Coordinates(longitude, Latitude)
+  const fetchCoordinates = async (cityName) => {
+    try {
+      const response = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${cityName}&key=cec03674be1448e7a95d863efdf90eb4`
+      );
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry;
+        setCoordinates({ lat, lng });
+      } else {
+        setCoordinates(null);
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  };
+
   const [images, setImages] = useState([]);
 
   const handleChange = (e) => {
@@ -44,6 +74,8 @@ const AddProperties = () => {
     Object.entries(formValues).forEach(([key, value]) => {
       data.append(key, value);
     });
+    data.append("longitude", coordinates.lng);
+    data.append("latitude", coordinates.lat);
     images.forEach((img) => data.append("images", img));
 
     try {
@@ -60,6 +92,7 @@ const AddProperties = () => {
         alert("Upload failed: " + (err.error || "Unknown error"));
       } else {
         toast.success("Property uploaded successfully!", { duration: 5000 });
+        setCity("");
         setFormValues({
           title: "",
           propertyType: "",
@@ -67,6 +100,7 @@ const AddProperties = () => {
           area: "",
           longitude: "",
           latitude: "",
+          description: "",
           score: "",
           reviewCount: "",
           rooms: "",
@@ -146,9 +180,12 @@ const AddProperties = () => {
             <input
               type="text"
               name="city"
-              value={formValues.city}
-              onChange={handleChange}
-              placeholder="e.g. Bandung"
+              value={(formValues.city = city)}
+              onChange={(e) => {
+                setCity(e.target.value);
+                fetchCoordinates(e.target.value);
+              }}
+              placeholder="e.g. Lagos"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
@@ -164,43 +201,47 @@ const AddProperties = () => {
               name="area"
               value={formValues.area}
               onChange={handleChange}
-              placeholder="e.g. Dago Pakar"
+              placeholder="e.g. Victoria Island"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
               required
             />
           </div>
 
           {/* Longitude */}
-          <div>
-            <label className="block text-sm font-medium text-gray-800 mb-1">
-              Longitude
-            </label>
-            <input
-              type="text"
-              name="longitude"
-              value={formValues.longitude}
-              onChange={handleChange}
-              placeholder="e.g. 43.4455"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
-              required
-            />
-          </div>
+          {coordinates && (
+            <div className="hidden">
+              <label className="block text-sm font-medium text-gray-800 mb-1">
+                Longitude
+              </label>
+              <input
+                type="text"
+                name="longitude"
+                value={coordinates.lng}
+                disabled
+                placeholder="e.g. 43.4455"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+                required
+              />
+            </div>
+          )}
 
           {/* Latitude */}
-          <div>
-            <label className="block text-sm font-medium text-gray-800 mb-1">
-              Latitude
-            </label>
-            <input
-              type="text"
-              name="latitude"
-              value={formValues.latitude}
-              onChange={handleChange}
-              placeholder="e.g. 3.4557"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
-              required
-            />
-          </div>
+          {coordinates && (
+            <div className="hidden">
+              <label className="block text-sm font-medium text-gray-800 mb-1">
+                Latitude
+              </label>
+              <input
+                type="text"
+                name="latitude"
+                value={coordinates.lat}
+                disabled
+                placeholder="e.g. 3.4557"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+                required
+              />
+            </div>
+          )}
 
           {/* Rating */}
           <div>

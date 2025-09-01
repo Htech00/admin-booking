@@ -4,13 +4,13 @@ import toast from "react-hot-toast";
 
 const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const [city, setCity] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
   const [formValues, setFormValues] = useState({
     title: "",
     propertyType: "",
     city: "",
     area: "",
-    longitude: "",
-    latitude: "",
     score: "",
     reviewCount: "",
     rooms: "",
@@ -20,6 +20,26 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
     amenities: "",
     description: "",
   });
+
+  // Automatically Fetch the Coordinates(longitude, Latitude)
+  const fetchCoordinates = async (cityName) => {
+    try {
+      const response = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${cityName}&key=cec03674be1448e7a95d863efdf90eb4`
+      );
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry;
+        setCoordinates({ lat, lng });
+      } else {
+        setCoordinates(null);
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  };
+
   const [images, setImages] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -33,14 +53,11 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
         );
         if (!res.ok) throw new Error("Failed to fetch property");
         const data = await res.json();
-
         setFormValues({
           title: data.title || "",
           propertyType: data.propertyType || "",
           city: data.city || "",
           area: data.area || "",
-          longitude: data.longitude || "",
-          latitude: data.latitude || "",
           score: data.score || "",
           reviewCount: data.reviewCount || "",
           rooms: data.rooms || "",
@@ -58,7 +75,15 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
     if (isOpen) {
       fetchProperty();
     }
-  }, [isOpen, propertyId]);
+
+    const delayDebounce = setTimeout(() => {
+      if (city.trim() !== "") {
+        fetchCoordinates(city);
+      }
+    }, 800); // wait 800ms after typing stops
+
+    return () => clearTimeout(delayDebounce); // cleanup
+  }, [isOpen, propertyId, city]);
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -83,6 +108,8 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
     Object.entries(formValues).forEach(([key, value]) => {
       data.append(key, value);
     });
+    data.append("longitude", coordinates.lng);
+    data.append("latitude", coordinates.lat);
     images.forEach((img) => data.append("images", img));
 
     try {
@@ -99,7 +126,7 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
         alert("Upload failed: " + (err.error || "Unknown error"));
       } else {
         toast.success("Property updated successfully!", { duration: 5000 });
-        onClose()
+        onClose();
         setImages([]);
         if (fileInputRef.current) {
           fileInputRef.current.value = null;
@@ -118,15 +145,12 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
       className={`fixed inset-0 z-50 flex items-center justify-center overflow-auto ${
         isOpen ? "" : "hidden"
       }`}
-      aria-modal="true"
-      role="dialog"
-      aria-labelledby="update-property-title"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm"></div>
 
       {/* Modal Box */}
-      <div className="relative top-40 z-10 bg-[#edeeecf2] max-w-full md:max-w-[1000px] w-full mx-4 md:mx-auto my-10 rounded-lg shadow-lg">
+      <div className="mt-40 z-10 bg-[#edeeecf2] max-w-full md:max-w-[1000px] w-full mx-4 md:mx-auto my-10 rounded-lg shadow-lg">
         {/* Header */}
         <div className="flex flex-col md:flex-row gap-3 items-center p-6">
           <PiBuildingApartmentLight className="text-[40px] md:text-[50px] text-[#0c36c2]" />
@@ -145,7 +169,7 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
           encType="multipart/form-data"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           <div>
+            <div>
               <label className="block text-sm font-medium text-gray-800 mb-1">
                 Title
               </label>
@@ -191,8 +215,11 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
                 type="text"
                 name="city"
                 value={formValues.city}
-                onChange={handleChange}
-                placeholder="e.g. Bandung"
+                onChange={(e) => {
+                  handleChange(e);
+                  fetchCoordinates(e.target.value);
+                }}
+                placeholder="e.g. Lagos"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
                 required
               />
@@ -208,15 +235,47 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
                 name="area"
                 value={formValues.area}
                 onChange={handleChange}
-                placeholder="e.g. Dago Pakar"
+                placeholder="e.g. Victoria Island"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
                 required
               />
             </div>
 
-            
+            {/* Longitude */}
+            {coordinates && (
+              <div className="hidden">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
+                  Longitude
+                </label>
+                <input
+                  type="text"
+                  name="longitude"
+                  value={coordinates.lng}
+                  disabled
+                  placeholder="e.g. 43.4455"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+                  required
+                />
+              </div>
+            )}
 
-        
+            {/* Latitude */}
+            {coordinates && (
+              <div className="hidden">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
+                  Latitude
+                </label>
+                <input
+                  type="text"
+                  name="latitude"
+                  value={coordinates.lat}
+                  disabled
+                  placeholder="e.g. 3.4557"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0c36c2] focus:outline-none"
+                  required
+                />
+              </div>
+            )}
 
             {/* Score */}
             <div>
@@ -343,7 +402,6 @@ const UpdateProperties = ({ isOpen, onClose, propertyId }) => {
                 ></textarea>
               </div>
             </div>
-
           </div>
 
           {/* Buttons */}

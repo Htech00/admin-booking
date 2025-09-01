@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { HiOutlineSquaresPlus } from "react-icons/hi2";
-import { CiHome } from "react-icons/ci";
-import { TfiViewListAlt } from "react-icons/tfi";
+import { RiDashboardFill } from "react-icons/ri";
+import { PiBuildingApartmentDuotone } from "react-icons/pi";
+import { LuView } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
 import { SiAdminer } from "react-icons/si";
@@ -12,33 +12,33 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
   const navigation = [
     {
       name: "Dashboard",
-      icon: <CiHome className="sm:text-[18px] text-[40px]" />,
+      icon: <RiDashboardFill  className="sm:text-[18px] text-[14px] text-[#fa6328]" />,
     },
 
     {
       name: "Add Property",
-      icon: <HiOutlineSquaresPlus className="sm:text-[18px] text-[40px]" />,
+      icon: <PiBuildingApartmentDuotone   className="sm:text-[18px] text-[14px] text-[#85baf2]" />,
     },
 
     {
       name: "View All Properties",
-      icon: <TfiViewListAlt className="sm:text-[18px] text-[40px]" />,
+      icon: <LuView  className="sm:text-[18px] text-[14px] text-[#446f75]" />,
     },
 
     {
       name: "View All Users",
-      icon: <FaUsers className="sm:text-[18px] text-[40px]" />,
+      icon: <FaUsers className="sm:text-[18px] text-[14px] text-[#707a57]" />,
     },
 
     {
       
       name: "Add Admin",
-      icon: <RiAdminLine className="sm:text-[18px] text-[40px]" />,
+      icon: <RiAdminLine className="sm:text-[18px] text-[14px] text-[#826153]" />,
       role:"super_admin"
     },
     {
       name: "View All Admin",
-      icon: <SiAdminer className="sm:text-[18px] text-[40px]" />,
+      icon: <SiAdminer className="sm:text-[18px] text-[14px] text-[#2470f2]" />,
       role:"super_admin"
     },
   ];
@@ -54,13 +54,13 @@ const SideBar = ({ activeNav, setActiveNav, show }) => {
         show ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="flex flex-col p-5">
-        <p className="text-[#9b9494] font-medium">Navigation</p>
+      <div className="flex flex-col">
+        <p className="text-[#9b9494] font-medium p-5">Navigation</p>
 
-        <div className="flex flex-col gap-7 py-7">
+        <div className="flex flex-col gap-7 ">
           {filteredNavigation.map(({ name, icon }) => (
             <a 
-            className={`flex py-3 pl-1 hover:text-white gap-5 text-white/70 cursor-pointer key={name} ${activeNav === name ? 'border-l-[#fa6328] border-l-4 rounded-md bg-[#3d4457]/20 text-white/80': ''}`}
+            className={`flex py-3 px-5  hover:text-white gap-5 text-white/70 cursor-pointer key={name} ${activeNav === name ? 'border-l-[#fa6328] border-l-2 rounded-md bg-[#3d4457]/20 text-white/80': ''}`}
             key={name}
             onClick={() => {setActiveNav(name)}}
             >
