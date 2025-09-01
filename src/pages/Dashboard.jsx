@@ -11,7 +11,7 @@ const Dashboard = () => {
 
    const fetchCount = async () => {
       try {
-        const result = await axios.get('https://admin-backend-rrt2.onrender.com/api/property/totalProperty'); 
+        const result = await axios.get(`${import.meta.env.VITE_API_BASE}/api/property/totalProperty`); 
         setTotalCount(result.data.totalCount);
       } catch (err) {
         console.error("Error fetching count:", err);

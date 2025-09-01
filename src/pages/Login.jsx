@@ -43,6 +43,7 @@ const Login = () => {
           </h2>
 
           <input
+            name="username"
             type="text"
             placeholder="Username"
             value={username}

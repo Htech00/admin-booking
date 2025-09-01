@@ -99,6 +99,7 @@ export default function AdminChat({ userName, chatBoxOpen }) {
 
         <div className="flex gap-2">
           <input
+            type="text"
             className="flex-1 rounded p-2 outline-none border border-[#ede8e8]"
             value={input}
             onChange={(e) => setInput(e.target.value)}

@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await fetch("https://admin-backend-rrt2.onrender.com/api/auth/login", {
+      const res = await fetch(`${
+          import.meta.env.VITE_API_BASE
+        }/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
