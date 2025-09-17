@@ -10,11 +10,12 @@ const socket = io(import.meta.env.VITE_API_BASE || "http://localhost:5000");
 
 // This is our main chat component
 // username is passed in as a prop, if not given, it defaults to "user123"
-export default function UserChat({ username = "user123" }) {
+export default function UserChat() {
   // React states:
   const [adminUsername, setAdminUsername] = useState(null);  // stores the admin we’re chatting with
   const [messages, setMessages] = useState([]);              // stores all chat messages
-  const [input, setInput] = useState("");                    // stores text the user is typing
+  const [input, setInput] = useState("");     
+  const  username = "user12345"                // stores text the user is typing
 
   // ----------------------------
   // useEffect 1: Runs when the component mounts or when username/adminUsername changes
@@ -27,7 +28,7 @@ export default function UserChat({ username = "user123" }) {
 
     // 2. Ask the backend: "Who is the active admin I should chat with?"
     axios
-      .get(`${import.meta.env.VITE_API_BASE}/chat/active-admin` )
+      .get(`${import.meta.env.VITE_API_BASE}/chat/active-admin`)
       .then((res) => {
         const { username: fetchedAdminUsername } = res.data;  // extract admin name
         setAdminUsername(fetchedAdminUsername);               // save it in state
