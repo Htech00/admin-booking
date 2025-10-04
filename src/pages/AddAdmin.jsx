@@ -12,9 +12,27 @@ const AddAdmin = () => {
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+
+  //Password strength regex
+  const strongPasswordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Validate password in real-time
+    if (name === 'password') {
+      if (!strongPasswordRegex.test(value)) {
+        setPasswordError(
+          'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.'
+        );
+      } else {
+        setPasswordError('');
+      }
+    }
+
+    setForm({ ...form, [name]: value });
   };
 
   const togglePasswordVisibility = () => {
@@ -23,6 +41,15 @@ const AddAdmin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Final password validation before submission
+    if (!strongPasswordRegex.test(form.password)) {
+      toast.error(
+        'Weak password. It must include uppercase, lowercase, number, and special character.'
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -85,7 +112,7 @@ const AddAdmin = () => {
           id="password"
           name="password"
           type={showPassword ? 'text' : 'password'}
-          placeholder="Enter password"
+          placeholder="Enter strong password"
           value={form.password}
           onChange={handleChange}
           required
@@ -97,6 +124,11 @@ const AddAdmin = () => {
         >
           {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
         </div>
+
+        {/* Password error message */}
+        {passwordError && (
+          <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+        )}
       </div>
 
       {/* Role */}
@@ -124,7 +156,7 @@ const AddAdmin = () => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2 rounded transition disabled:opacity-50 bg-[#2563eb] text-[#ffffff] hover:bg-[#1d4ed8]"
+        className="w-full cursor-pointer py-2 rounded transition disabled:opacity-50 bg-[#2563eb] text-[#ffffff] hover:bg-[#1d4ed8]"
       >
         {loading ? 'Adding...' : 'Add Admin'}
       </button>
